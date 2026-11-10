@@ -1,3 +1,4 @@
+
 FROM python:3.11-slim
 
 # Set environment variables for Python
@@ -12,8 +13,8 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends gcc python3-dev libssl-dev curl && \
     rm -rf /var/lib/apt/lists/*
 
-# Upgrade pip and essential Python tools
-RUN python -m pip install --no-cache-dir --upgrade pip "setuptools>=78.1.1" wheel
+# Upgrade pip and wheel
+RUN python -m pip install --no-cache-dir --upgrade pip wheel
 
 # Create non-root user
 RUN groupadd -r appgroup && \
@@ -23,8 +24,9 @@ RUN groupadd -r appgroup && \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Ensure setuptools is upgraded to a secure version
-RUN python -m pip install --no-cache-dir --upgrade --force-reinstall "setuptools>=78.1.1"
+# Remove old setuptools and install secure version
+RUN python -m pip uninstall -y setuptools && \
+    python -m pip install --no-cache-dir "setuptools>=78.1.1"
 
 # Copy application code
 COPY . .
