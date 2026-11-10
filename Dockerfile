@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.11-slim
 
 # Set environment variables for Python
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -13,7 +13,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Upgrade pip and essential Python tools
-RUN python -m pip install --upgrade pip setuptools>=70.0.0 wheel
+RUN python -m pip install --no-cache-dir --upgrade pip "setuptools>=78.1.1" wheel
 
 # Create non-root user
 RUN groupadd -r appgroup && \
