@@ -23,6 +23,9 @@ RUN groupadd -r appgroup && \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Ensure setuptools is upgraded to a secure version
+RUN python -m pip install --no-cache-dir --upgrade --force-reinstall "setuptools>=78.1.1"
+
 # Copy application code
 COPY . .
 
