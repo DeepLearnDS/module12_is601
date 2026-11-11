@@ -1,264 +1,125 @@
-# 📦 Project Setup
+# Module 12: User & Calculation Routes + Integration Testing
 
----
+## Assignment Overview
 
-# 🧩 1. Install Homebrew (Mac Only)
+This project implements user registration and login endpoints, calculation CRUD operations, and integration testing using FastAPI, Pydantic schemas, and SQLAlchemy models.
 
-> Skip this step if you're on Windows.
+The project also integrates automated testing and Docker Hub deployment through GitHub Actions.
 
-Homebrew is a package manager for macOS.  
-You’ll use it to easily install Git, Python, Docker, etc.
+## 1. User Endpoints
 
-**Install Homebrew:**
+The application implements the following user authentication endpoints:
 
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/users/register` | Register a new user using the `UserCreate` schema |
+| POST | `/users/login` | Authenticate a user by verifying hashed passwords |
 
-**Verify Homebrew:**
+## 2. Calculation Endpoints (BREAD)
 
-```bash
-brew --version
-```
+The application implements the following calculation operations:
 
-If you see a version number, you're good to go.
+| Operation | Method | Endpoint |
+|---|---|---|
+| Browse | GET | `/calculations` |
+| Read | GET | `/calculations/{id}` |
+| Edit | PUT/PATCH | `/calculations/{id}` |
+| Add | POST | `/calculations` |
+| Delete | DELETE | `/calculations/{id}` |
 
----
+The calculation endpoints use the existing `CalculationCreate` and `CalculationRead` Pydantic schemas and the SQLAlchemy Calculation model.
 
-# 🧩 2. Install and Configure Git
+## 3. Manual Testing and OpenAPI
 
-## Install Git
+The endpoints can be manually tested using FastAPI OpenAPI documentation.
 
-- **MacOS (using Homebrew)**
+Access the documentation at:
 
-```bash
-brew install git
-```
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
 
-- **Windows**
+These interfaces allow users to submit requests and verify endpoint responses.
 
-Download and install [Git for Windows](https://git-scm.com/download/win).  
-Accept the default options during installation.
+## 4. Integration Testing
 
-**Verify Git:**
+Pytest is used to validate user and calculation functionality.
 
-```bash
-git --version
-```
+The integration tests cover:
 
----
+**User Tests**
+- User registration
+- User login
+- Password verification
+- User data stored in the database
 
-## Configure Git Globals
+**Calculation Tests**
+- Create a calculation
+- Retrieve a calculation
+- Update a calculation
+- Delete a calculation
+- Invalid input and error responses
 
-Set your name and email so Git tracks your commits properly:
+## 5. Running Integration Tests Locally
 
-```bash
-git config --global user.name "Your Name"
-git config --global user.email "your_email@example.com"
-```
-
-Confirm the settings:
-
-```bash
-git config --list
-```
-
----
-
-## Generate SSH Keys and Connect to GitHub
-
-> Only do this once per machine.
-
-1. Generate a new SSH key:
+Activate the project's virtual environment:
 
 ```bash
-ssh-keygen -t ed25519 -C "your_email@example.com"
+source venv/bin/activate
 ```
 
-(Press Enter at all prompts.)
-
-2. Start the SSH agent:
+Run all tests:
 
 ```bash
-eval "$(ssh-agent -s)"
+pytest -v
 ```
 
-3. Add the SSH private key to the agent:
+Run integration tests:
 
 ```bash
-ssh-add ~/.ssh/id_ed25519
+pytest tests/integration/ -v
 ```
 
-4. Copy your SSH public key:
-
-- **Mac/Linux:**
+Run unit tests:
 
 ```bash
-cat ~/.ssh/id_ed25519.pub | pbcopy
+pytest tests/unit/ -v
 ```
 
-- **Windows (Git Bash):**
+Run end-to-end tests:
 
 ```bash
-cat ~/.ssh/id_ed25519.pub | clip
+pytest tests/e2e/ -v
 ```
 
-5. Add the key to your GitHub account:
-   - Go to [GitHub SSH Settings](https://github.com/settings/keys)
-   - Click **New SSH Key**, paste the key, save.
+Make sure the PostgreSQL database is running and the test database connection is configured before running the tests.
 
-6. Test the connection:
+## 6. CI/CD with GitHub Actions
+
+GitHub Actions automates the testing and deployment process.
+
+The workflow includes:
+
+1. **Test:** Starts a PostgreSQL service and runs the automated test suite.
+2. **Security:** Builds the Docker image.
+3. **Deploy:** Pushes the Docker image to Docker Hub after the preceding jobs succeed.
+
+The workflow runs automatically when changes are pushed to the main branch.
+
+## 7. Docker Hub Repository
+
+The Docker image is published to:
+
+https://hub.docker.com/r/codeec/601_module12
+
+Pull the image using:
 
 ```bash
-ssh -T git@github.com
+docker pull codeec/601_module12:latest
 ```
 
-You should see a success message.
+## 8. GitHub Repository
 
----
+Project repository:
 
-# 🧩 3. Clone the Repository
+https://github.com/DeepLearnDS/module12_is601
 
-Now you can safely clone the course project:
-
-```bash
-git clone <repository-url>
-cd <repository-directory>
-```
-
----
-
-# 🛠️ 4. Install Python 3.10+
-
-## Install Python
-
-- **MacOS (Homebrew)**
-
-```bash
-brew install python
-```
-
-- **Windows**
-
-Download and install [Python for Windows](https://www.python.org/downloads/).  
-✅ Make sure you **check the box** `Add Python to PATH` during setup.
-
-**Verify Python:**
-
-```bash
-python3 --version
-```
-or
-```bash
-python --version
-```
-
----
-
-## Create and Activate a Virtual Environment
-
-(Optional but recommended)
-
-```bash
-python3 -m venv venv
-source venv/bin/activate   # Mac/Linux
-venv\Scripts\activate.bat  # Windows
-```
-
-### Install Required Packages
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-# 🐳 5. (Optional) Docker Setup
-
-> Skip if Docker isn't used in this module.
-
-## Install Docker
-
-- [Install Docker Desktop for Mac](https://www.docker.com/products/docker-desktop/)
-- [Install Docker Desktop for Windows](https://www.docker.com/products/docker-desktop/)
-
-## Build Docker Image
-
-```bash
-docker build -t <image-name> .
-```
-
-## Run Docker Container
-
-```bash
-docker run -it --rm <image-name>
-```
-
----
-
-# 🚀 6. Running the Project
-
-- **Without Docker**:
-
-```bash
-python main.py
-```
-
-(or update this if the main script is different.)
-
-- **With Docker**:
-
-```bash
-docker run -it --rm <image-name>
-```
-
----
-
-# 📝 7. Submission Instructions
-
-After finishing your work:
-
-```bash
-git add .
-git commit -m "Complete Module X"
-git push origin main
-```
-
-Then submit the GitHub repository link as instructed.
-
----
-
-# 🔥 Useful Commands Cheat Sheet
-
-| Action                         | Command                                          |
-| ------------------------------- | ------------------------------------------------ |
-| Install Homebrew (Mac)          | `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"` |
-| Install Git                     | `brew install git` or Git for Windows installer |
-| Configure Git Global Username  | `git config --global user.name "Your Name"`      |
-| Configure Git Global Email     | `git config --global user.email "you@example.com"` |
-| Clone Repository                | `git clone <repo-url>`                          |
-| Create Virtual Environment     | `python3 -m venv venv`                           |
-| Activate Virtual Environment   | `source venv/bin/activate` / `venv\Scripts\activate.bat` |
-| Install Python Packages        | `pip install -r requirements.txt`               |
-| Build Docker Image              | `docker build -t <image-name> .`                |
-| Run Docker Container            | `docker run -it --rm <image-name>`               |
-| Push Code to GitHub             | `git add . && git commit -m "message" && git push` |
-
----
-
-# 📋 Notes
-
-- Install **Homebrew** first on Mac.
-- Install and configure **Git** and **SSH** before cloning.
-- Use **Python 3.10+** and **virtual environments** for Python projects.
-- **Docker** is optional depending on the project.
-
----
-
-# 📎 Quick Links
-
-- [Homebrew](https://brew.sh/)
-- [Git Downloads](https://git-scm.com/downloads)
-- [Python Downloads](https://www.python.org/downloads/)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- [GitHub SSH Setup Guide](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
